@@ -3,6 +3,12 @@
 # 输出日志
 echo "[INFO] 开始执行 setup.sh 脚本..."
 
+# 检查 /tmp/setup_script 目录是否存在，若存在则删除
+if [ -d "/tmp/setup_script" ]; then
+    echo "[INFO] 目录 /tmp/setup_script 已存在，正在删除..."
+    rm -rf /tmp/setup_script
+fi
+
 # 安装 Rust
 echo "[INFO] 正在安装 Rust 工具链..."
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
