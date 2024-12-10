@@ -2,21 +2,21 @@
 
 echo "[INFO] 开始执行 setup.sh 脚本..."
 
-# 确保临时目录为空
-TEMP_DIR="/tmp/setup_script_$(date +%s)"
+# 定义临时目录路径
+TEMP_DIR="/tmp/setup_script"
 
-# 如果 /tmp/setup_script 存在，先删除它
-if [ -d "/tmp/setup_script" ]; then
+# 检查 /tmp/setup_script 目录是否存在，如果存在，删除
+if [ -d "$TEMP_DIR" ]; then
     echo "[INFO] 目录 /tmp/setup_script 已存在，正在删除..."
-    rm -rf /tmp/setup_script
+    rm -rf "$TEMP_DIR"
 fi
 
 # 创建新的临时目录
-mkdir -p $TEMP_DIR
+mkdir -p "$TEMP_DIR"
 
 # 拉取最新的 setup.sh 脚本
 echo "[INFO] 拉取 setup.sh 脚本..."
-git clone https://github.com/55620/bot/raw/refs/heads/main/setup.sh $TEMP_DIR
+git clone https://github.com/55620/bot/raw/refs/heads/main/setup.sh "$TEMP_DIR"
 
 # 检查 git 克隆是否成功
 if [ $? -ne 0 ]; then
@@ -26,7 +26,7 @@ fi
 
 # 进入临时目录并执行脚本
 echo "[INFO] 执行 setup.sh 脚本..."
-cd $TEMP_DIR
+cd "$TEMP_DIR"
 chmod +x setup.sh
 
 # 执行脚本
@@ -42,6 +42,6 @@ fi
 
 # 清理临时目录
 echo "[INFO] 清理临时目录..."
-rm -rf $TEMP_DIR
+rm -rf "$TEMP_DIR"
 
 echo "[INFO] 脚本执行完成！"
