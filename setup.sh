@@ -3,36 +3,46 @@
 # 输出日志
 echo "[INFO] 开始执行 setup.sh 脚本..."
 
+# 使用一个唯一的临时目录来存储 setup.sh
+TEMP_DIR="/tmp/setup_script_$(date +%s)"
+
+# 创建新的临时目录
+mkdir -p $TEMP_DIR
+
 # 检查 /tmp/setup_script 目录是否存在，若存在则删除
 if [ -d "/tmp/setup_script" ]; then
     echo "[INFO] 目录 /tmp/setup_script 已存在，正在删除..."
     rm -rf /tmp/setup_script
 fi
 
-# 安装 Rust
-echo "[INFO] 正在安装 Rust 工具链..."
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+# 拉取 setup.sh 脚本并将其保存在临时目录
+echo "[INFO] 拉取 setup.sh 脚本..."
+git clone https://github.com/55620/bot/raw/refs/heads/main/setup.sh $TEMP_DIR
 
-# 配置 Rust 环境变量
-echo "[INFO] 配置 Rust 环境变量..."
-source $HOME/.cargo/env  # 加载环境变量
-
-# 检查 Rust 是否安装成功
-echo "[INFO] 检查 Rust 是否安装成功..."
-if ! command -v rustc &> /dev/null
-then
-    echo "[ERROR] Rust 安装失败！"
+# 检查 git 克隆是否成功
+if [ $? -ne 0 ]; then
+    echo "[ERROR] 拉取 setup.sh 脚本失败，请检查 URL 或网络连接！"
     exit 1
-else
-    echo "[INFO] Rust 安装成功！"
 fi
 
-# 安装 Nexus CLI
-echo "[INFO] 正在安装 Nexus CLI..."
-nohup curl https://cli.nexus.xyz/ | sh -s -- -y > output.log 2>&1 &
+# 进入临时目录并执行脚本
+echo "[INFO] 执行 setup.sh 脚本..."
+cd $TEMP_DIR
+chmod +x setup.sh
 
-# 检查安装日志
-echo "[INFO] 检查安装日志..."
-tail -n 10 output.log
+# 执行脚本
+./setup.sh
+
+# 检查执行状态
+if [ $? -eq 0 ]; then
+    echo "[INFO] 脚本执行成功！"
+else
+    echo "[ERROR] 脚本执行失败！"
+    exit 1
+fi
+
+# 清理临时目录
+echo "[INFO] 清理临时目录..."
+rm -rf $TEMP_DIR
 
 echo "[INFO] 脚本执行完成！"
