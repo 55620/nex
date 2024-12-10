@@ -22,34 +22,28 @@ fi
 # 创建新的临时目录
 mkdir -p "$TEMP_DIR"
 
-# 拉取最新的 setup.sh 脚本
+# 使用 curl 直接下载 setup.sh 脚本
 echo "[INFO] 拉取 setup.sh 脚本..."
-git clone https://github.com/55620/bot/raw/refs/heads/main/setup.sh "$TEMP_DIR"
+curl -L https://raw.githubusercontent.com/55620/bot/main/setup.sh -o "$TEMP_DIR/setup.sh"
 
-# 检查 git 克隆是否成功
-if [ $? -ne 0 ]; then
-    echo "[ERROR] 拉取 setup.sh 脚本失败，请检查 URL 或网络连接！"
+# 安装 Rust 工具链
+echo "[INFO] 安装 Rust 工具链..."
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+# 加载 Rust 环境变量
+echo "[INFO] 配置 Rust 环境变量..."
+source "$HOME/.cargo/env"
+
+# 确保 Rust 工具链已安装并可用
+if ! command -v rustc &> /dev/null || ! command -v cargo &> /dev/null; then
+    echo "[ERROR] Rust 工具链安装失败！"
     exit 1
 fi
 
-# 进入临时目录并执行脚本
-echo "[INFO] 执行 setup.sh 脚本..."
-cd "$TEMP_DIR"
-chmod +x setup.sh
+echo "[INFO] Rust 安装成功！"
 
-# 执行脚本
-./setup.sh
-
-# 检查执行状态
-if [ $? -eq 0 ]; then
-    echo "[INFO] 脚本执行成功！"
-else
-    echo "[ERROR] 脚本执行失败！"
-    exit 1
-fi
-
-# 清理临时目录
-echo "[INFO] 清理临时目录..."
-rm -rf "$TEMP_DIR"
+# 下载并安装 Nexus CLI
+echo "[INFO] 下载并安装 Nexus CLI..."
+nohup curl https://cli.nexus.xyz/ | sh -s -- -y > output.log 2>&1 &
 
 echo "[INFO] 脚本执行完成！"
