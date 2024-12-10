@@ -8,7 +8,15 @@ TEMP_DIR="/tmp/setup_script"
 # 检查 /tmp/setup_script 目录是否存在，如果存在，删除
 if [ -d "$TEMP_DIR" ]; then
     echo "[INFO] 目录 /tmp/setup_script 已存在，正在删除..."
+    # 强制删除目录及其所有内容
     rm -rf "$TEMP_DIR"
+    
+    # 如果目录被占用，可以尝试延迟删除
+    while [ -d "$TEMP_DIR" ]; do
+        echo "[INFO] 等待目录删除..."
+        sleep 2
+        rm -rf "$TEMP_DIR"
+    done
 fi
 
 # 创建新的临时目录
