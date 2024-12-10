@@ -2,13 +2,20 @@
 
 echo "[INFO] 开始执行 setup.sh 脚本..."
 
-# 设置临时目录
+# 定义临时目录路径
 TEMP_DIR="/tmp/setup_script"
 
-# 删除旧的临时目录
+# 检查 /tmp/setup_script 目录是否存在，如果存在，删除
 if [ -d "$TEMP_DIR" ]; then
     echo "[INFO] 目录 $TEMP_DIR 已存在，正在删除..."
     rm -rf "$TEMP_DIR"
+    
+    # 如果目录被占用，可以尝试延迟删除
+    while [ -d "$TEMP_DIR" ]; do
+        echo "[INFO] 等待目录删除..."
+        sleep 2
+        rm -rf "$TEMP_DIR"
+    done
 fi
 
 # 创建新的临时目录
