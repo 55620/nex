@@ -30,7 +30,7 @@ curl -L https://raw.githubusercontent.com/55620/bot/main/setup.sh -o "$TEMP_DIR/
 echo "[INFO] 安装 Rust 工具链..."
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
-# 加载 Rust 环境变量
+# 配置 Rust 环境变量
 echo "[INFO] 配置 Rust 环境变量..."
 source "$HOME/.cargo/env"
 
@@ -41,6 +41,10 @@ if ! command -v rustc &> /dev/null || ! command -v cargo &> /dev/null; then
 fi
 
 echo "[INFO] Rust 安装成功！"
+
+# 确保环境变量正确加载
+echo "[INFO] 当前 rustc 版本：$(rustc --version)"
+echo "[INFO] 当前 cargo 版本：$(cargo --version)"
 
 # 下载并安装 Nexus CLI
 echo "[INFO] 下载并安装 Nexus CLI..."
